@@ -102,9 +102,13 @@
     0 0 0 36px #5D4037,
     /* Dark separator */
     0 0 0 40px #2c1810,
-    /* Gold glow */
-    0 0 30px 40px rgba(255, 215, 0, 0.3);
+  /* Gold glow */
+  0 0 30px 40px rgba(255, 215, 0, 0.3);
   display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .wheel.spinning {
   box-shadow: 
     /* Intense glow during spin */
@@ -122,14 +126,8 @@
     0 0 0 32px #6D4C41,
     0 0 0 36px #5D4037,
     0 0 0 40px #2c1810;
-  animation: roulette-glow 0.6s ease-in-out infinite alternate;
-}
-
-.wheel.spinning {
   animation: roulette-glow 0.3s ease-in-out infinite alternate;
-}
-
-.wheel.slowing-down {
+}.wheel.slowing-down {
   animation: roulette-anticipation 0.15s ease-in-out infinite;
 }
 
