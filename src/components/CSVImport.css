@@ -1,0 +1,54 @@
+.csv-import {
+  width: 100%;
+}
+
+.csv-import-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+  width: 100%;
+}
+
+.csv-import-button:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+}
+
+.csv-import-button.processing {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.csv-import-button .icon {
+  flex-shrink: 0;
+}
+
+.csv-import-button .icon.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .csv-import-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
