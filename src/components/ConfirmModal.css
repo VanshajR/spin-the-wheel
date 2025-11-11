@@ -17,18 +17,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
 }
 
 .confirm-modal-content {
   position: relative;
-  background: white;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #FFD700;
   border-radius: 20px;
   padding: 2rem;
   max-width: 450px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(255, 215, 0, 0.4), inset 0 1px 0 rgba(255, 215, 0, 0.2);
   text-align: center;
   z-index: 1;
 }
@@ -38,17 +39,17 @@
   top: 1rem;
   right: 1rem;
   background: transparent;
-  border: none;
+  border: 2px solid #FFD700;
   padding: 0.5rem;
   cursor: pointer;
-  color: #718096;
+  color: #FFD700;
   border-radius: 8px;
   transition: all 0.2s;
 }
 
 .confirm-modal-close:hover {
-  background: #f7fafc;
-  color: #2d3748;
+  background: rgba(255, 215, 0, 0.2);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .confirm-modal-icon {
@@ -58,26 +59,31 @@
 }
 
 .icon-success {
-  color: #48bb78;
+  color: #50C878;
+  filter: drop-shadow(0 0 10px rgba(80, 200, 120, 0.6));
 }
 
 .icon-alert {
-  color: #f6ad55;
+  color: #FFA500;
+  filter: drop-shadow(0 0 10px rgba(255, 165, 0, 0.6));
 }
 
 .icon-confirm {
-  color: #667eea;
+  color: #FFD700;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
 }
 
 .confirm-modal-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #FFD700;
   margin: 0 0 1rem 0;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  letter-spacing: 0.5px;
 }
 
 .confirm-modal-message {
-  color: #4a5568;
+  color: rgba(255, 215, 0, 0.8);
   font-size: 1rem;
   line-height: 1.6;
   margin: 0 0 2rem 0;
@@ -105,37 +111,41 @@
 }
 
 .btn-modal-cancel {
-  background: #f7fafc;
-  color: #4a5568;
-  border: 2px solid #e2e8f0;
+  background: rgba(26, 26, 26, 0.6);
+  color: rgba(255, 215, 0, 0.7);
+  border: 2px solid rgba(255, 215, 0, 0.3);
 }
 
 .btn-modal-cancel:hover {
-  background: #edf2f7;
-  border-color: #cbd5e0;
+  background: rgba(45, 45, 45, 0.8);
+  border-color: #FFD700;
+  color: #FFD700;
 }
 
 .btn-modal-third {
-  background: #fff;
-  color: #667eea;
-  border: 2px solid #667eea;
+  background: rgba(26, 26, 26, 0.8);
+  color: #FFA500;
+  border: 2px solid #FFA500;
 }
 
 .btn-modal-third:hover {
-  background: #f0f4ff;
-  border-color: #5a67d8;
-  color: #5a67d8;
+  background: rgba(255, 165, 0, 0.1);
+  border-color: #FFD700;
+  color: #FFD700;
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.3);
 }
 
 .btn-modal-confirm {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #FFD700;
+  border: 2px solid #FFD700;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
 }
 
 .btn-modal-confirm:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
 }
 
 @media (max-width: 480px) {

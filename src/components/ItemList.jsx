@@ -20,7 +20,7 @@ const ItemList = () => {
     if (!trimmedName) {
       setConfirmModal({
         isOpen: true,
-        message: 'Please enter an item name',
+        message: 'Please enter a name',
         onConfirm: () => {},
         type: 'alert'
       });
@@ -55,7 +55,7 @@ const ItemList = () => {
     if (!trimmedName) {
       setConfirmModal({
         isOpen: true,
-        message: 'Item name cannot be empty',
+        message: 'Name cannot be empty',
         onConfirm: () => {},
         type: 'alert'
       });
@@ -75,7 +75,7 @@ const ItemList = () => {
   const handleDelete = (id) => {
     setConfirmModal({
       isOpen: true,
-      message: 'Are you sure you want to delete this item?',
+      message: 'Are you sure you want to delete this entry?',
       onConfirm: () => {
         deleteItem(id);
       }
@@ -86,7 +86,7 @@ const ItemList = () => {
     if (items.length === 0) return;
     setConfirmModal({
       isOpen: true,
-      message: `Are you sure you want to delete all ${items.length} items?`,
+      message: `Are you sure you want to delete all ${items.length} entries?`,
       onConfirm: () => {
         clearItems();
       }
@@ -96,9 +96,9 @@ const ItemList = () => {
   return (
     <div className="item-list">
       <div className="list-header">
-        <h2 className="item-list-title">Wheel Items ({items.length})</h2>
+        <h2 className="item-list-title">Wheel Entries ({items.length})</h2>
         {items.length > 0 && (
-          <button onClick={handleClearAll} className="clear-all-button" title="Clear all items">
+          <button onClick={handleClearAll} className="clear-all-button" title="Clear all entries">
             <Trash size={18} />
           </button>
         )}
@@ -110,7 +110,7 @@ const ItemList = () => {
           type="text"
           value={newItemName}
           onChange={(e) => setNewItemName(e.target.value)}
-          placeholder="Enter item name..."
+          placeholder="Enter name..."
           className="item-input"
           maxLength={50}
         />
@@ -123,7 +123,7 @@ const ItemList = () => {
       <ImageUpload
         onItemsExtracted={(items) => {
           // Show success message
-          const message = `Added ${items.length} item(s) from image!`;
+          const message = `Added ${items.length} entr${items.length === 1 ? 'y' : 'ies'} from image!`;
           setConfirmModal({
             isOpen: true,
             message: message,
@@ -137,7 +137,7 @@ const ItemList = () => {
       <CSVImport
         onItemsExtracted={(items) => {
           // Show success message
-          const message = `Added ${items.length} item(s) from CSV!`;
+          const message = `Added ${items.length} entr${items.length === 1 ? 'y' : 'ies'} from CSV!`;
           setConfirmModal({
             isOpen: true,
             message: message,
@@ -150,7 +150,7 @@ const ItemList = () => {
       {/* Items List */}
       <div className="items-container">
         {items.length === 0 ? (
-          <p className="empty-message">No items yet. Add some items to get started!</p>
+          <p className="empty-message">No entries yet. Add some to get started!</p>
         ) : (
           <ul className="items">
             {items.map((item) => (

@@ -30,23 +30,26 @@ const CSVImport = ({ onItemsExtracted }) => {
         // Parse CSV - handle both comma and newline separated values
         let items = [];
         
-        // Try to split by newlines first
-        const lines = text.split(/\r?\n/).filter(line => line.trim());
+        // Split by newlines and commas
+        const lines = text.split(/\r?\n/);
         
-        if (lines.length > 1) {
-          // Multiple lines - treat each line as an item
-          items = lines.map(line => {
-            // Take first column if comma-separated
-            const firstColumn = line.split(',')[0].trim();
-            return firstColumn.replace(/['"]/g, ''); // Remove quotes
-          });
-        } else {
-          // Single line - split by comma
-          items = text.split(',').map(item => item.trim().replace(/['"]/g, ''));
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          
+          // If line contains comma, split by comma
+          if (line.includes(',')) {
+            const parts = line.split(',');
+            items.push(...parts.map(p => p.trim().replace(/^["']|["']$/g, '')));
+          } else {
+            // Otherwise treat whole line as one item
+            items.push(line.trim().replace(/^["']|["']$/g, ''));
+          }
         }
         
         // Filter out empty items and items that are too long
         items = items.filter(item => item.length > 0 && item.length < 100);
+        
+        console.log('Parsed CSV items:', items); // Debug log
         
         if (items.length === 0) {
           setConfirmModal({
@@ -77,6 +80,7 @@ const CSVImport = ({ onItemsExtracted }) => {
                 // Add all items (including duplicates)
                 addItems(items);
                 onItemsExtracted?.(items);
+                setIsProcessing(false);
               },
               onCancel: () => {
                 // Add only unique items
@@ -84,6 +88,7 @@ const CSVImport = ({ onItemsExtracted }) => {
                   addItems(uniqueItems);
                   onItemsExtracted?.(uniqueItems);
                 }
+                setIsProcessing(false);
               },
               onThirdButton: () => {
                 // Add only duplicates
@@ -92,17 +97,18 @@ const CSVImport = ({ onItemsExtracted }) => {
                   addItems(duplicateItems);
                   onItemsExtracted?.(duplicateItems);
                 }
+                setIsProcessing(false);
               },
               type: 'duplicate',
               confirmText: 'Add All',
               cancelText: 'Add Unique Only',
               thirdButtonText: 'Add Duplicates Only'
             });
-            setIsProcessing(false);
             return;
           }
         }
         
+        console.log('Adding items to wheel:', items); // Debug log
         addItems(items);
         onItemsExtracted?.(items);
         setIsProcessing(false);
@@ -110,7 +116,7 @@ const CSVImport = ({ onItemsExtracted }) => {
         console.error('CSV parsing error:', error);
         setConfirmModal({
           isOpen: true,
-          message: 'Failed to parse CSV file. Please check the format and try again.',
+          message: `Failed to parse CSV file: ${error.message}`,
           onConfirm: () => {},
           type: 'alert'
         });

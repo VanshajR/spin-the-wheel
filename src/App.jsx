@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Settings as SettingsIcon, RotateCcw } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,12 +13,34 @@ import './App.css';
 function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [winner, setWinner] = useState(null);
+  const [eliminationWinner, setEliminationWinner] = useState(null);
   const [currentView, setCurrentView] = useState('wheel'); // 'wheel' or 'coin'
-  const { handleSpinResult, redoLastSpin, soundEnabled, items } = useStore();
+  const wheelRef = useRef(null);
+  const { handleSpinResult, redoLastSpin, soundEnabled, items, gameMode } = useStore();
 
   const handleSpinComplete = (selectedItem) => {
-    setWinner(selectedItem);
-    handleSpinResult(selectedItem);
+    // Check if this is the last elimination (2 items before spin, 1 after)
+    if (gameMode === 'elimination' && items.length === 2) {
+      // This spin will eliminate one, leaving the winner
+      const remainingItem = items.find(item => item.id !== selectedItem.id);
+      setWinner(selectedItem); // Show eliminated item first
+      handleSpinResult(selectedItem);
+      
+      // Store the winner to show after elimination modal closes
+      setTimeout(() => {
+        setEliminationWinner(remainingItem);
+      }, 100);
+    } else if (gameMode === 'elimination' && items.length === 1) {
+      // Only 1 item left - show winner immediately
+      setEliminationWinner(items[0]);
+      // Reset wheel immediately
+      if (wheelRef.current) {
+        wheelRef.current.resetRotation();
+      }
+    } else {
+      setWinner(selectedItem);
+      handleSpinResult(selectedItem);
+    }
     
     // Play sound if enabled
     if (soundEnabled) {
@@ -106,12 +128,12 @@ function App() {
 
             {/* Wheel Section */}
             <section className="wheel-section">
-              <Wheel onSpinComplete={handleSpinComplete} />
+              <Wheel ref={wheelRef} onSpinComplete={handleSpinComplete} />
               
               {items.length > 0 && (
                 <div className="wheel-info">
                   <p className="item-count">
-                    {items.length} {items.length === 1 ? 'item' : 'items'} on the wheel
+                    {items.length} {items.length === 1 ? 'entry' : 'entries'} on the wheel
                   </p>
                 </div>
               )}
@@ -130,14 +152,32 @@ function App() {
       {/* Result Modal */}
       <ResultModal
         winner={winner}
-        onClose={() => setWinner(null)}
+        onClose={() => {
+          setWinner(null);
+          // Don't show elimination winner automatically - it's already set
+        }}
         onRedo={handleRedo}
       />
-
-      {/* Footer */}
-      <footer className="app-footer">
-        <p>Made with ❤️ using React</p>
-      </footer>
+      
+      {/* Elimination Winner Modal */}
+      {eliminationWinner && !winner && (
+        <ResultModal
+          winner={eliminationWinner}
+          onClose={() => {
+            console.log('Closing elimination winner modal');
+            setEliminationWinner(null);
+            // Reset wheel rotation when winner popup closes - with slight delay
+            setTimeout(() => {
+              if (wheelRef.current) {
+                console.log('Calling resetRotation from modal close');
+                wheelRef.current.resetRotation();
+              }
+            }, 100);
+          }}
+          onRedo={null}
+          isEliminationWinner={true}
+        />
+      )}
     </div>
   );
 }

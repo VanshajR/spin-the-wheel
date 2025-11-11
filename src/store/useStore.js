@@ -21,17 +21,14 @@ const useStore = create((set, get) => ({
   
   // Add item
   addItem: (name) => {
-    const colors = [
-      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
-      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788',
-      '#E74C3C', '#3498DB', '#9B59B6', '#1ABC9C', '#E67E22'
-    ];
-    
     const items = get().items;
+    // Simple alternating red/black pattern
+    const color = items.length % 2 === 0 ? '#D32F2F' : '#1a1a1a';
+    
     const newItem = {
       id: Date.now().toString(),
       name: name.trim(),
-      color: colors[items.length % colors.length]
+      color: color
     };
     
     set({ items: [...items, newItem] });
@@ -40,18 +37,16 @@ const useStore = create((set, get) => ({
   
   // Add multiple items
   addItems: (names) => {
-    const colors = [
-      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
-      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788',
-      '#E74C3C', '#3498DB', '#9B59B6', '#1ABC9C', '#E67E22'
-    ];
-    
     const items = get().items;
-    const newItems = names.map((name, index) => ({
-      id: Date.now().toString() + index,
-      name: name.trim(),
-      color: colors[(items.length + index) % colors.length]
-    }));
+    const newItems = names.map((name, index) => {
+      // Simple alternating pattern
+      const color = (items.length + index) % 2 === 0 ? '#D32F2F' : '#1a1a1a';
+      return {
+        id: Date.now().toString() + index,
+        name: name.trim(),
+        color: color
+      };
+    });
     
     set({ items: [...items, ...newItems] });
     return newItems;
@@ -68,7 +63,14 @@ const useStore = create((set, get) => ({
   
   // Delete item
   deleteItem: (id) => {
-    set({ items: get().items.filter(item => item.id !== id) });
+    // Filter out the item and reassign colors to maintain alternation
+    const filteredItems = get().items.filter(item => item.id !== id);
+    const recoloredItems = filteredItems.map((item, index) => ({
+      ...item,
+      color: index % 2 === 0 ? '#D32F2F' : '#1a1a1a'
+    }));
+    
+    set({ items: recoloredItems });
   },
   
   // Clear all items
@@ -124,7 +126,13 @@ const useStore = create((set, get) => ({
     
     // Remove item if setting is enabled or in elimination mode
     if (removeAfterSpin || gameMode === 'elimination') {
-      set({ items: items.filter(item => item.id !== winner.id) });
+      const filteredItems = items.filter(item => item.id !== winner.id);
+      // Reassign colors to maintain proper alternation
+      const recoloredItems = filteredItems.map((item, index) => ({
+        ...item,
+        color: index % 2 === 0 ? '#D32F2F' : '#1a1a1a'
+      }));
+      set({ items: recoloredItems });
     }
   },
   
@@ -132,7 +140,13 @@ const useStore = create((set, get) => ({
   redoLastSpin: () => {
     const { lastWinner, items } = get();
     if (lastWinner && !items.find(item => item.id === lastWinner.id)) {
-      set({ items: [...items, lastWinner] });
+      // Add back the item and reassign all colors
+      const newItems = [...items, lastWinner];
+      const recoloredItems = newItems.map((item, index) => ({
+        ...item,
+        color: index % 2 === 0 ? '#D32F2F' : '#1a1a1a'
+      }));
+      set({ items: recoloredItems });
     }
   },
   

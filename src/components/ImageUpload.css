@@ -1,5 +1,6 @@
 .image-upload {
   width: 100%;
+  flex-shrink: 0;
 }
 
 .image-upload-button {
@@ -8,20 +9,24 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #FFD700;
+  border: 2px solid #FFD700;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
   width: 100%;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
 }
 
 .image-upload-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
 }
 
 .image-upload-button.processing {
@@ -65,17 +70,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
 }
 
 .modal-content {
   position: relative;
-  background: white;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #FFD700;
   border-radius: 16px;
   padding: 0;
   max-width: 400px;
   width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(255, 215, 0, 0.4), inset 0 1px 0 rgba(255, 215, 0, 0.2);
   z-index: 1;
 }
 
@@ -84,28 +91,30 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 2px solid #FFD700;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.25rem;
-  color: #2d3748;
+  color: #FFD700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .modal-close {
   background: transparent;
-  border: none;
+  border: 2px solid #FFD700;
   padding: 0.5rem;
   cursor: pointer;
-  color: #718096;
+  color: #FFD700;
   border-radius: 8px;
   transition: all 0.2s;
 }
 
 .modal-close:hover {
-  background: #f7fafc;
-  color: #2d3748;
+  background: rgba(255, 215, 0, 0.2);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .modal-body {
@@ -116,7 +125,7 @@
 }
 
 .modal-info {
-  color: #4a5568;
+  color: rgba(255, 215, 0, 0.8);
   margin: 0;
   font-size: 0.95rem;
 }
@@ -126,32 +135,35 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
-  background: #f7fafc;
+  background: rgba(26, 26, 26, 0.6);
+  border: 2px solid rgba(255, 215, 0, 0.3);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .option-toggle:hover {
-  background: #edf2f7;
+  background: rgba(45, 45, 45, 0.8);
+  border-color: #FFD700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
 }
 
 .option-toggle input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #667eea;
+  accent-color: #FFD700;
 }
 
 .option-label {
-  color: #2d3748;
+  color: #FFD700;
   font-weight: 500;
   flex: 1;
 }
 
 .modal-footer {
   padding: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 2px solid #FFD700;
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
@@ -164,27 +176,33 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: none;
+  border: 2px solid;
+  letter-spacing: 0.5px;
 }
 
 .btn-cancel {
-  background: #f7fafc;
-  color: #4a5568;
+  background: rgba(26, 26, 26, 0.6);
+  color: rgba(255, 215, 0, 0.7);
+  border-color: rgba(255, 215, 0, 0.3);
 }
 
 .btn-cancel:hover {
-  background: #edf2f7;
+  background: rgba(45, 45, 45, 0.8);
+  border-color: #FFD700;
+  color: #FFD700;
 }
 
 .btn-upload {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #FFD700;
+  border-color: #FFD700;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
 }
 
 .btn-upload:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.5);
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
 }
 
 @media (max-width: 768px) {

@@ -7,13 +7,15 @@ const CoinToss = () => {
   const [result, setResult] = useState('heads'); // Default showing heads
   const [rotations, setRotations] = useState(0);
   const [hasFlipped, setHasFlipped] = useState(false);
-  const [yPosition, setYPosition] = useState(0);
+  const [flipKey, setFlipKey] = useState(0); // Key to force re-render and reset animation
 
   const flipCoin = () => {
     if (isFlipping) return;
 
+    // Reset animation by incrementing key
+    setFlipKey(prev => prev + 1);
     setIsFlipping(true);
-    setHasFlipped(true);
+    setHasFlipped(false); // Hide result during flip
 
     // Random result
     const coinResult = Math.random() < 0.5 ? 'heads' : 'tails';
@@ -29,6 +31,7 @@ const CoinToss = () => {
     // Show result after animation
     setTimeout(() => {
       setResult(coinResult);
+      setHasFlipped(true);
     }, 1800);
 
     setTimeout(() => {
@@ -42,10 +45,11 @@ const CoinToss = () => {
       
       <div className="coin-wrapper">
         <motion.div
+          key={flipKey} // Force re-render to reset animation
           className="coin"
+          initial={{ rotateX: 0 }}
           animate={{ 
             rotateX: rotations,
-            y: isFlipping ? 0 : 0,
             scale: isFlipping ? [1, 1.1, 1] : 1
           }}
           transition={{ 

@@ -129,6 +129,23 @@ const Settings = ({ isOpen, onClose }) => {
                 <li>Try the Coin Toss for quick decisions!</li>
               </ul>
             </div>
+
+            {/* Creator Credit */}
+            <div className="setting-section creator-section">
+              <a 
+                href="https://github.com/VanshajR" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="creator-link"
+              >
+                <img 
+                  src="https://vanshajraghuvanshi.me/static/media/logo.8014969c3f3cf76ced02.png" 
+                  alt="VanshajR Logo" 
+                  className="creator-logo"
+                />
+                <span className="creator-name">VanshajR</span>
+              </a>
+            </div>
           </div>
         </motion.div>
       </motion.div>

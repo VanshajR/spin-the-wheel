@@ -1,17 +1,112 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { motion } from 'framer-motion';
 import useStore from '../store/useStore';
+import CasinoLever from './CasinoLever';
 import './Wheel.css';
 
-const Wheel = ({ onSpinComplete }) => {
+const Wheel = forwardRef(({ onSpinComplete }, ref) => {
   const { items, isSpinning, setIsSpinning } = useStore();
   const [rotation, setRotation] = useState(0);
+  const [isSlowingDown, setIsSlowingDown] = useState(false);
   const wheelRef = useRef(null);
+  const tickSoundIntervalRef = useRef(null);
+  const audioContextRef = useRef(null);
+
+  // Expose reset function to parent
+  useImperativeHandle(ref, () => ({
+    resetRotation: () => {
+      console.log('Resetting wheel rotation to 0');
+      setRotation(0);
+    }
+  }));
+
+  // Initialize audio context
+  const getAudioContext = () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioContextRef.current;
+  };
+
+  // Tick sound (roulette ball clicking)
+  const playTickSound = () => {
+    try {
+      const audioContext = getAudioContext();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Roulette ball click sound - higher pitch, very short
+      oscillator.frequency.value = 1200 + Math.random() * 200; // Slight variation
+      oscillator.type = 'square';
+      
+      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.03);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.03);
+    } catch (error) {
+      console.log('Audio not supported');
+    }
+  };
+
+  // Win sound (casino jackpot celebration)
+  const playWinSound = () => {
+    try {
+      const audioContext = getAudioContext();
+      
+      // Play a triumphant chord progression
+      const chords = [
+        [523.25, 659.25, 783.99], // C major
+        [587.33, 739.99, 880.00], // D major
+        [659.25, 830.61, 987.77]  // E major
+      ];
+      
+      chords.forEach((chord, chordIndex) => {
+        chord.forEach((freq) => {
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+
+          oscillator.frequency.value = freq;
+          oscillator.type = 'sine';
+          
+          const startTime = audioContext.currentTime + (chordIndex * 0.2);
+          gainNode.gain.setValueAtTime(0.15, startTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.4);
+          
+          oscillator.start(startTime);
+          oscillator.stop(startTime + 0.4);
+        });
+      });
+
+      // Add a celebratory high note
+      setTimeout(() => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.frequency.value = 1318.51; // High E
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+      }, 600);
+    } catch (error) {
+      console.log('Audio not supported');
+    }
+  };
 
   const spinWheel = () => {
     if (isSpinning || items.length === 0) return;
 
     setIsSpinning(true);
+    setIsSlowingDown(false);
 
     // Calculate random winner
     const randomIndex = Math.floor(Math.random() * items.length);
@@ -21,24 +116,58 @@ const Wheel = ({ onSpinComplete }) => {
     const segmentAngle = 360 / items.length;
     const winnerAngle = segmentAngle * randomIndex;
     
-    // Add multiple full rotations + land on winner (pointing up, so subtract from 270)
-    const spins = 5 + Math.random() * 3; // 5-8 full rotations
+    // Add multiple full rotations + land on winner
+    const spins = 8 + Math.random() * 4; // 8-12 full rotations for more drama
     const finalRotation = rotation + (spins * 360) + (270 - winnerAngle);
 
     setRotation(finalRotation);
 
+    // Start tick sounds
+    let tickInterval = 50; // Start fast
+    const startTickSound = () => {
+      playTickSound();
+      tickSoundIntervalRef.current = setTimeout(() => {
+        tickInterval += 5; // Gradually slow down
+        if (tickInterval < 300) {
+          startTickSound();
+        }
+      }, tickInterval);
+    };
+    startTickSound();
+
+    // Mark as slowing down at 70% of animation
+    setTimeout(() => {
+      setIsSlowingDown(true);
+    }, 2800);
+
+    // Stop tick sounds and play win sound
+    setTimeout(() => {
+      if (tickSoundIntervalRef.current) {
+        clearTimeout(tickSoundIntervalRef.current);
+      }
+      playWinSound();
+    }, 4000);
+
     // Wait for animation to complete
     setTimeout(() => {
       setIsSpinning(false);
+      setIsSlowingDown(false);
       onSpinComplete(winner);
-    }, 4000);
+    }, 4200);
   };
 
   const renderWheel = () => {
     if (items.length === 0) {
       return (
         <div className="empty-wheel">
-          <p>Add items to start spinning!</p>
+          <div className="empty-wheel-content">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            <h3>Ready to Spin!</h3>
+            <p>Add items to get started</p>
+          </div>
         </div>
       );
     }
@@ -75,8 +204,10 @@ const Wheel = ({ onSpinComplete }) => {
           
           const textX = 100 + textRadius * Math.cos(textAngle);
           const textY = 100 + textRadius * Math.sin(textAngle);
-          // Rotate text to point along radius (add 90 to make it perpendicular to radius)
-          const textRotation = midAngle - 90;
+          // Rotate text to point outward along the radius
+          // For single item, keep text horizontal (0 degrees)
+          // Otherwise add 90 degrees to make text perpendicular to radius (readable outward)
+          const textRotation = items.length === 1 ? 0 : midAngle + 90;
           
           // Dynamic font size based on number of items
           let fontSize = 12;
@@ -95,7 +226,21 @@ const Wheel = ({ onSpinComplete }) => {
 
           return (
             <g key={item.id}>
-              <path d={pathData} fill={item.color} stroke="#fff" strokeWidth="2" />
+              <defs>
+                <linearGradient id={`gradient-${item.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: item.color, stopOpacity: 1 }} />
+                  <stop offset="100%" style={{ stopColor: item.color, stopOpacity: 0.85 }} />
+                </linearGradient>
+              </defs>
+              <path 
+                d={pathData} 
+                fill={`url(#gradient-${item.id})`} 
+                stroke="#fff" 
+                strokeWidth="2"
+                style={{
+                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+                }}
+              />
               <text
                 x={textX}
                 y={textY}
@@ -117,9 +262,27 @@ const Wheel = ({ onSpinComplete }) => {
             </g>
           );
         })}
-        {/* Center circle */}
-        <circle cx="100" cy="100" r="15" fill="#fff" stroke="#333" strokeWidth="2" />
-        <circle cx="100" cy="100" r="8" fill="#333" />
+        {/* Center hub - Roulette style with brass/chrome finish - SMALLER */}
+        <defs>
+          <radialGradient id="centerGradient">
+            <stop offset="0%" style={{ stopColor: '#e8d4a0', stopOpacity: 1 }} />
+            <stop offset="30%" style={{ stopColor: '#b8860b', stopOpacity: 1 }} />
+            <stop offset="70%" style={{ stopColor: '#8b7355', stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: '#654321', stopOpacity: 1 }} />
+          </radialGradient>
+          <radialGradient id="innerHub">
+            <stop offset="0%" style={{ stopColor: '#1a1a1a', stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: '#0a0a0a', stopOpacity: 1 }} />
+          </radialGradient>
+        </defs>
+        {/* Outer brass ring */}
+        <circle cx="100" cy="100" r="12" fill="url(#centerGradient)" stroke="#FFD700" strokeWidth="1.5" />
+        {/* Middle dark ring */}
+        <circle cx="100" cy="100" r="8" fill="url(#innerHub)" stroke="#8b7355" strokeWidth="0.8" />
+        {/* Inner brass detail */}
+        <circle cx="100" cy="100" r="5" fill="#1a1a1a" stroke="#FFD700" strokeWidth="1" />
+        {/* Center dot */}
+        <circle cx="100" cy="100" r="2" fill="#FFD700" stroke="#0a0a0a" strokeWidth="0.3" />
       </svg>
     );
   };
@@ -127,29 +290,43 @@ const Wheel = ({ onSpinComplete }) => {
   return (
     <div className="wheel-container">
       {/* Pointer - Arrow pointing down */}
-      <div className="wheel-pointer">
-        <svg width="50" height="70" viewBox="0 0 50 70">
+      <motion.div 
+        className="wheel-pointer"
+        style={{ left: '50%', marginLeft: '-25px' }}
+        animate={{ 
+          y: [0, -8, 0],
+          scale: [1, 1.05, 1]
+        }}
+        transition={{ 
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      >
+        <svg width="50" height="70" viewBox="0 0 50 70" style={{ display: 'block' }}>
           <defs>
             <filter id="arrowShadow" x="-50%" y="-50%" width="200%" height="200%">
               <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.3"/>
             </filter>
             <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style={{ stopColor: '#ff6b6b', stopOpacity: 1 }} />
-              <stop offset="100%" style={{ stopColor: '#ff4444', stopOpacity: 1 }} />
+              <stop offset="0%" style={{ stopColor: '#FFD700', stopOpacity: 1 }} />
+              <stop offset="100%" style={{ stopColor: '#FFA500', stopOpacity: 1 }} />
             </linearGradient>
           </defs>
           <path 
             d="M 25 70 L 5 45 L 18 45 L 18 0 L 32 0 L 32 45 L 45 45 Z" 
             fill="url(#arrowGradient)" 
             filter="url(#arrowShadow)"
+            stroke="#1a1a1a"
+            strokeWidth="2"
           />
         </svg>
-      </div>
+      </motion.div>
 
       {/* Wheel */}
       <motion.div
         ref={wheelRef}
-        className="wheel"
+        className={`wheel ${isSpinning ? 'spinning' : ''} ${isSlowingDown ? 'slowing-down' : ''}`}
         animate={{ rotate: rotation }}
         transition={{
           duration: 4,
@@ -158,17 +335,37 @@ const Wheel = ({ onSpinComplete }) => {
       >
         {renderWheel()}
       </motion.div>
+
+      {/* Light bulbs around the wheel */}
+      <div className="wheel-lights">
+        {Array.from({ length: 24 }).map((_, index) => {
+          const angle = (index * 360 / 24) * (Math.PI / 180);
+          const x = 290 + 280 * Math.cos(angle - Math.PI / 2);
+          const y = 290 + 280 * Math.sin(angle - Math.PI / 2);
+          
+          return (
+            <div
+              key={index}
+              className={`light-bulb ${isSpinning ? 'flashing' : ''}`}
+              style={{
+                left: `${x}px`,
+                top: `${y}px`,
+                transform: 'translate(-50%, -50%)',
+                animationDelay: `${index * 0.05}s`
+              }}
+            />
+          );
+        })}
+      </div>
       
-      {/* Spin button - positioned over the wheel */}
-      <button
-        className={`spin-button ${isSpinning ? 'spinning' : ''}`}
-        onClick={spinWheel}
-        disabled={isSpinning || items.length === 0}
-      >
-        {isSpinning ? 'Spinning...' : 'SPIN'}
-      </button>
+      {/* Casino Lever - replaces spin button */}
+      <CasinoLever 
+        onPull={spinWheel}
+        disabled={items.length === 0}
+        isSpinning={isSpinning}
+      />
     </div>
   );
-};
+});
 
 export default Wheel;

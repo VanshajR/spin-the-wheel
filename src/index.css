@@ -23,7 +23,6 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -53,23 +52,23 @@ textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #FFD700;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  background: #FFA500;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(102, 126, 234, 0.3);
-  color: #2d3748;
+  background: rgba(255, 215, 0, 0.3);
+  color: #fff;
 }
 
 ::-moz-selection {
-  background: rgba(102, 126, 234, 0.3);
-  color: #2d3748;
+  background: rgba(255, 215, 0, 0.3);
+  color: #fff;
 }
 
 /* Accessibility */

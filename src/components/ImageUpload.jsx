@@ -59,10 +59,16 @@ const ImageUpload = ({ onItemsExtracted }) => {
     
     for (const file of files) {
       const items = await processImage(file);
+      console.log('OCR extracted items from image:', items); // Debug log
       if (items && items.length > 0) {
         allItems = [...allItems, ...items];
       }
     }
+    
+    setIsProcessing(false);
+    setProgress(0);
+    
+    console.log('Total OCR items:', allItems); // Debug log
     
     if (allItems.length === 0) {
       setConfirmModal({
@@ -71,7 +77,6 @@ const ImageUpload = ({ onItemsExtracted }) => {
         onConfirm: () => {},
         type: 'alert'
       });
-      setIsProcessing(false);
       return;
     }
     
@@ -86,12 +91,14 @@ const ImageUpload = ({ onItemsExtracted }) => {
           message: `Found ${duplicates.length} duplicate item(s):\n${duplicates.slice(0, 5).join(', ')}${duplicates.length > 5 ? '...' : ''}`,
           onConfirm: () => {
             // Add all items (including duplicates)
+            console.log('Adding all items (including duplicates):', allItems); // Debug log
             addItems(allItems);
             onItemsExtracted?.(allItems);
           },
           onCancel: () => {
             // Add only unique items
             if (uniqueItems.length > 0) {
+              console.log('Adding unique items only:', uniqueItems); // Debug log
               addItems(uniqueItems);
               onItemsExtracted?.(uniqueItems);
             }
@@ -100,6 +107,7 @@ const ImageUpload = ({ onItemsExtracted }) => {
             // Add only duplicates
             const duplicateItems = allItems.filter(item => duplicates.includes(item));
             if (duplicateItems.length > 0) {
+              console.log('Adding duplicate items only:', duplicateItems); // Debug log
               addItems(duplicateItems);
               onItemsExtracted?.(duplicateItems);
             }
@@ -109,14 +117,13 @@ const ImageUpload = ({ onItemsExtracted }) => {
           cancelText: 'Add Unique Only',
           thirdButtonText: 'Add Duplicates Only'
         });
-        setIsProcessing(false);
         return;
       }
     }
     
+    console.log('Adding items to wheel:', allItems); // Debug log
     addItems(allItems);
     onItemsExtracted?.(allItems);
-    setIsProcessing(false);
   };
 
   const handleFileChange = (e) => {

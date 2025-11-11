@@ -5,7 +5,7 @@ import { Trophy, X as XIcon, RotateCcw } from 'lucide-react';
 import useStore from '../store/useStore';
 import './ResultModal.css';
 
-const ResultModal = ({ winner, onClose, onRedo }) => {
+const ResultModal = ({ winner, onClose, onRedo, isEliminationWinner = false }) => {
   const { gameMode, items } = useStore();
   const [showConfetti, setShowConfetti] = React.useState(false);
   const [windowSize, setWindowSize] = React.useState({
@@ -35,7 +35,7 @@ const ResultModal = ({ winner, onClose, onRedo }) => {
 
   if (!winner) return null;
 
-  const isLastItem = items.length === 0;
+  const isLastItem = items.length === 0 || isEliminationWinner;
   const isRewardMode = gameMode === 'reward';
   const isEliminationMode = gameMode === 'elimination';
 
@@ -153,7 +153,7 @@ const ResultModal = ({ winner, onClose, onRedo }) => {
             )}
 
             {/* Redo button */}
-            {!isLastItem && (
+            {!isLastItem && onRedo && (
               <button className="redo-button" onClick={onRedo}>
                 <RotateCcw size={20} />
                 Undo & Spin Again
