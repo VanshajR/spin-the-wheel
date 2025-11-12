@@ -293,8 +293,12 @@ body {
 }
 
 .wheel-info {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
-  margin-top: 1rem;
+  pointer-events: none;
 }
 
 .item-count {

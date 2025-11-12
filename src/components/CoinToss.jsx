@@ -22,19 +22,17 @@ const CoinToss = () => {
     
     // Calculate rotations (multiple flips + final result)
     const baseRotations = 6 + Math.random() * 2; // 6-8 full flips
-    // Heads = 0°, Tails = 180°
-    const finalRotation = coinResult === 'heads' ? 0 : 180;
+    // Heads = 0° or 360°, Tails = 180°
+    // Make sure we end on the correct face
+    const finalRotation = coinResult === 'heads' ? 360 : 180;
     const totalRotation = (baseRotations * 360) + finalRotation;
 
     setRotations(totalRotation);
 
-    // Show result after animation
+    // Show result after animation - match the visual state
     setTimeout(() => {
       setResult(coinResult);
       setHasFlipped(true);
-    }, 1800);
-
-    setTimeout(() => {
       setIsFlipping(false);
     }, 2000);
   };

@@ -52,12 +52,14 @@
 .coin-face.heads {
   background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
   transform: rotateX(0deg);
+  z-index: 2;
 }
 
 .coin-face.tails {
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
   transform: rotateX(180deg);
   border-color: #FFA500;
+  z-index: 1;
 }
 
 .coin-content {

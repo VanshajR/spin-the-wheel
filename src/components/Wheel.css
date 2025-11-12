@@ -5,8 +5,10 @@
   justify-content: center;
   position: relative;
   padding: 2rem;
-  padding-top: 2.5rem;
+  padding-top: 3.5rem;
   min-height: 600px;
+  height: 100%;
+  max-height: 100%;
 }
 
 /* Light bulbs around the wheel */
@@ -85,6 +87,7 @@
   height: 450px;
   border-radius: 50%;
   position: relative;
+  flex-shrink: 0;
   /* Luxury wood rim styling */
   box-shadow: 
     0 10px 40px rgba(0, 0, 0, 0.5),
@@ -175,7 +178,6 @@
   height: 100%;
   border-radius: 50%;
 }
-
 .empty-wheel {
   width: 450px;
   height: 450px;
@@ -184,6 +186,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  box-shadow:tent: center;
   box-shadow: 
     0 10px 40px rgba(0, 0, 0, 0.5),
     0 0 0 8px #1a1a1a,

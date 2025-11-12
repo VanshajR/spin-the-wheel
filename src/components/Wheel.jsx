@@ -201,32 +201,30 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
           // Calculate text position and size based on number of items
           const midAngle = index * segmentAngle + segmentAngle / 2;
           const textAngle = (midAngle - 90) * (Math.PI / 180);
-          // Adjust text radius to keep text away from outer edge
-          let textRadius = 60;
-          if (items.length > 15) textRadius = 50;
-          else if (items.length > 10) textRadius = 55;
+          // Position text in the middle area of each segment
+          let textRadius = 65;
+          if (items.length > 20) textRadius = 65;
+          else if (items.length > 15) textRadius = 65;
+          else if (items.length > 10) textRadius = 65;
           
           const textX = 100 + textRadius * Math.cos(textAngle);
           const textY = 100 + textRadius * Math.sin(textAngle);
-          // Rotate text to point outward along the radius
-          // For single item, keep text horizontal (0 degrees)
-          // Otherwise add 90 degrees to make text perpendicular to radius (readable outward)
+          // Rotate text to be readable - perpendicular to radius pointing outward
           const textRotation = items.length === 1 ? 0 : midAngle + 90;
           
           // Dynamic font size based on number of items
-          let fontSize = 12;
+          let fontSize = 10;
           if (items.length > 20) fontSize = 7;
           else if (items.length > 15) fontSize = 8;
           else if (items.length > 12) fontSize = 9;
-          else if (items.length > 8) fontSize = 10;
-          else if (items.length > 5) fontSize = 11;
+          else if (items.length > 8) fontSize = 9.5;
           
-          // Dynamic text length - keep it shorter to fit within sectors
-          let maxLength = 15;
-          if (items.length > 20) maxLength = 7;
-          else if (items.length > 15) maxLength = 9;
-          else if (items.length > 12) maxLength = 11;
-          else if (items.length > 8) maxLength = 13;
+          // Dynamic text length - be more generous
+          let maxLength = 20;
+          if (items.length > 20) maxLength = 8;
+          else if (items.length > 15) maxLength = 10;
+          else if (items.length > 12) maxLength = 12;
+          else if (items.length > 8) maxLength = 15;
 
           return (
             <g key={item.id}>
