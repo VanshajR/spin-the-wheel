@@ -127,8 +127,11 @@
     0 0 0 36px #5D4037,
     0 0 0 40px #2c1810;
   animation: roulette-glow 0.3s ease-in-out infinite alternate;
-}.wheel.slowing-down {
-  animation: roulette-anticipation 0.15s ease-in-out infinite;
+}
+
+.wheel.slowing-down {
+  /* Remove shaking animation - let Framer Motion ease-out handle deceleration */
+  animation: roulette-glow 0.5s ease-in-out infinite alternate;
 }
 
 @keyframes roulette-glow {
@@ -164,12 +167,6 @@
       0 0 0 36px #5D4037,
       0 0 0 40px #2c1810;
   }
-}
-
-@keyframes roulette-anticipation {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(-0.5deg) scale(1.002); }
-  75% { transform: rotate(0.5deg) scale(0.998); }
 }
 
 .wheel-svg {

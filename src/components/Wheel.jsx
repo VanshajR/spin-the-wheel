@@ -330,7 +330,7 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
         animate={{ rotate: rotation }}
         transition={{
           duration: 4,
-          ease: [0.17, 0.67, 0.35, 0.96]
+          ease: [0.33, 1, 0.68, 1] // Smooth ease-out for better deceleration
         }}
       >
         {renderWheel()}
