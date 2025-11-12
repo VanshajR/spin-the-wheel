@@ -5,7 +5,7 @@ import CasinoLever from './CasinoLever';
 import './Wheel.css';
 
 const Wheel = forwardRef(({ onSpinComplete }, ref) => {
-  const { items, isSpinning, setIsSpinning } = useStore();
+  const { items, isSpinning, setIsSpinning, soundEnabled } = useStore();
   const [rotation, setRotation] = useState(0);
   const [isSlowingDown, setIsSlowingDown] = useState(false);
   const wheelRef = useRef(null);
@@ -30,6 +30,8 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
 
   // Tick sound (roulette ball clicking)
   const playTickSound = () => {
+    if (!soundEnabled) return;
+    
     try {
       const audioContext = getAudioContext();
       const oscillator = audioContext.createOscillator();
@@ -38,15 +40,15 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
 
-      // Roulette ball click sound - higher pitch, very short
-      oscillator.frequency.value = 1200 + Math.random() * 200; // Slight variation
-      oscillator.type = 'square';
+      // Softer, lower pitched tick sound
+      oscillator.frequency.value = 400 + Math.random() * 100; // Lower frequency
+      oscillator.type = 'sine'; // Smoother sound
       
-      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.03);
+      gainNode.gain.setValueAtTime(0.08, audioContext.currentTime); // Quieter
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
       
       oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.03);
+      oscillator.stop(audioContext.currentTime + 0.05);
     } catch (error) {
       console.log('Audio not supported');
     }
@@ -54,14 +56,16 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
 
   // Win sound (casino jackpot celebration)
   const playWinSound = () => {
+    if (!soundEnabled) return;
+    
     try {
       const audioContext = getAudioContext();
       
-      // Play a triumphant chord progression
+      // Softer, more pleasant chord progression
       const chords = [
-        [523.25, 659.25, 783.99], // C major
-        [587.33, 739.99, 880.00], // D major
-        [659.25, 830.61, 987.77]  // E major
+        [261.63, 329.63, 392.00], // C major (lower octave)
+        [293.66, 369.99, 440.00], // D major
+        [329.63, 415.30, 493.88]  // E major
       ];
       
       chords.forEach((chord, chordIndex) => {
@@ -75,28 +79,28 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
           oscillator.frequency.value = freq;
           oscillator.type = 'sine';
           
-          const startTime = audioContext.currentTime + (chordIndex * 0.2);
-          gainNode.gain.setValueAtTime(0.15, startTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.4);
+          const startTime = audioContext.currentTime + (chordIndex * 0.25);
+          gainNode.gain.setValueAtTime(0.1, startTime); // Quieter
+          gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.5);
           
           oscillator.start(startTime);
-          oscillator.stop(startTime + 0.4);
+          oscillator.stop(startTime + 0.5);
         });
       });
 
-      // Add a celebratory high note
+      // Add a softer celebratory note
       setTimeout(() => {
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
-        oscillator.frequency.value = 1318.51; // High E
+        oscillator.frequency.value = 523.25; // Middle C (lower)
         oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        gainNode.gain.setValueAtTime(0.12, audioContext.currentTime); // Quieter
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
         oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
-      }, 600);
+        oscillator.stop(audioContext.currentTime + 0.6);
+      }, 750);
     } catch (error) {
       console.log('Audio not supported');
     }
@@ -166,7 +170,7 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
               <path d="M12 6v6l4 2" />
             </svg>
             <h3>Ready to Spin!</h3>
-            <p>Add items to get started</p>
+            <p>Add entries to get started</p>
           </div>
         </div>
       );

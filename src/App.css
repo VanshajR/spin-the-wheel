@@ -152,9 +152,21 @@ body {
 .app-main {
   flex: 1;
   padding: 1.5rem;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.app-main::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.app-main {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .main-content {
@@ -162,38 +174,23 @@ body {
   margin: 0 auto;
   display: grid;
   grid-template-columns: 380px 1fr;
-  gap: 2rem;
+  gap: 4rem;
   flex: 1;
   min-height: 0;
   width: 100%;
+  overflow: visible;
 }
 
 .sidebar {
-  /* Casino green felt texture */
-  background: 
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 1px,
-      rgba(0, 0, 0, 0.05) 1px,
-      rgba(0, 0, 0, 0.05) 2px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 1px,
-      rgba(0, 0, 0, 0.05) 1px,
-      rgba(0, 0, 0, 0.05) 2px
-    ),
-    linear-gradient(135deg, #0D3B1F 0%, #1a6b3f 50%, #0D3B1F 100%);
+  /* Dark luxury control panel */
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(255, 215, 0, 0.2),
-    inset 0 1px 0 rgba(255, 215, 0, 0.1);
-  border: 2px solid #8B7355;
-  border-bottom: 3px solid #FFD700;
+    0 8px 32px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(255, 215, 0, 0.3),
+    inset 0 1px 2px rgba(255, 215, 0, 0.2);
+  border: 2px solid #FFD700;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -283,6 +280,16 @@ body {
   justify-content: center;
   gap: 1rem;
   position: relative;
+}
+
+/* Hide scrollbar for wheel section */
+.wheel-section::-webkit-scrollbar {
+  display: none;
+}
+
+.wheel-section {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .wheel-info {

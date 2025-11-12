@@ -61,7 +61,7 @@ const CasinoLever = ({ onPull, disabled, isSpinning }) => {
 
       {/* Label */}
       <div className="lever-label">
-        {isSpinning ? 'SPINNING!' : disabled ? 'ADD ITEMS' : 'PULL'}
+        {isSpinning ? 'SPINNING!' : disabled ? 'ADD ENTRIES' : 'PULL'}
       </div>
     </div>
   );

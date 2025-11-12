@@ -22,8 +22,9 @@ const useStore = create((set, get) => ({
   // Add item
   addItem: (name) => {
     const items = get().items;
-    // Simple alternating red/black pattern
-    const color = items.length % 2 === 0 ? '#D32F2F' : '#1a1a1a';
+    // Alternating red/black pattern for roulette wheel
+    const colors = ['#D32F2F', '#1a1a1a']; // Red, Black
+    const color = colors[items.length % 2];
     
     const newItem = {
       id: Date.now().toString(),
@@ -38,9 +39,9 @@ const useStore = create((set, get) => ({
   // Add multiple items
   addItems: (names) => {
     const items = get().items;
+    const colors = ['#D32F2F', '#1a1a1a']; // Red, Black
     const newItems = names.map((name, index) => {
-      // Simple alternating pattern
-      const color = (items.length + index) % 2 === 0 ? '#D32F2F' : '#1a1a1a';
+      const color = colors[(items.length + index) % 2];
       return {
         id: Date.now().toString() + index,
         name: name.trim(),
@@ -64,10 +65,11 @@ const useStore = create((set, get) => ({
   // Delete item
   deleteItem: (id) => {
     // Filter out the item and reassign colors to maintain alternation
+    const colors = ['#D32F2F', '#1a1a1a']; // Red, Black
     const filteredItems = get().items.filter(item => item.id !== id);
     const recoloredItems = filteredItems.map((item, index) => ({
       ...item,
-      color: index % 2 === 0 ? '#D32F2F' : '#1a1a1a'
+      color: colors[index % 2]
     }));
     
     set({ items: recoloredItems });
