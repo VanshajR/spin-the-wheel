@@ -5,7 +5,7 @@
   justify-content: center;
   position: relative;
   padding: 2rem;
-  padding-top: 3.5rem;
+  padding-top: 2.5rem;
   min-height: 600px;
   height: 100%;
   max-height: 100%;
@@ -187,7 +187,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow:tent: center;
   box-shadow: 
     0 10px 40px rgba(0, 0, 0, 0.5),
     0 0 0 8px #1a1a1a,

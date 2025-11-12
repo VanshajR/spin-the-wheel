@@ -226,35 +226,174 @@
 .items-container {
   flex: 1;
   overflow-y: auto;
-  padding-right: 0.5rem;
+  overflow-x: hidden;
   min-height: 0;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .items-container::-webkit-scrollbar {
-  width: 6px;
+  display: none; /* Chrome, Safari, Opera */
 }
 
-.items-container::-webkit-scrollbar-track {
-  background: rgba(26, 26, 26, 0.5);
-  border-radius: 10px;
-}
-
-.items-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  border-radius: 10px;
-  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-}
-
-.items-container::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+.empty-state-wrapper {
+  position: absolute;
+  top: 0;
+  /* Extend beyond sidebar edges - compensate for any padding/clipping */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevent scrolling */
+  pointer-events: none; /* Prevent interaction */
 }
 
 .empty-message {
   text-align: center;
   color: rgba(255, 215, 0, 0.6);
-  padding: 2rem;
+  padding: 1rem 1.5rem 0.5rem 1.5rem; /* Add back horizontal padding for text */
   font-style: italic;
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  flex-shrink: 0;
+}
+
+/* Casino dealer suit - fills remaining space */
+.dealer-suit {
+  flex: 1;
+  position: relative;
+  margin: 0; /* Remove all margins so it fills the entire space */
+  min-height: 0; /* Allow flex to shrink properly */
+  display: none; /* Hidden for now */
+  background: 
+    /* Tie knot - small and centered */
+    radial-gradient(ellipse 24px 16px at 50% 0%, #5a0000 0%, #3a0000 100%),
+    
+    /* Tie body - dark red/burgundy */
+    linear-gradient(180deg, 
+      transparent 0%,
+      transparent 12px,
+      #8B0000 12px,
+      #A52A2A 30%,
+      #8B0000 50%,
+      #6a0000 100%
+    ),
+    
+    /* Tie diagonal texture */
+    repeating-linear-gradient(135deg,
+      transparent,
+      transparent 4px,
+      rgba(139, 0, 0, 0.4) 4px,
+      rgba(139, 0, 0, 0.4) 8px
+    ),
+    
+    /* White shirt - left collar */
+    linear-gradient(145deg, 
+      #FFFFFF 0%,
+      #F8F8F8 20%,
+      #E8E8E8 35%,
+      transparent 35%
+    ),
+    
+    /* White shirt - right collar */
+    linear-gradient(215deg, 
+      #FFFFFF 0%,
+      #F8F8F8 20%,
+      #E8E8E8 35%,
+      transparent 35%
+    ),
+    
+    /* Black jacket - left lapel with angle */
+    linear-gradient(135deg,
+      #1a1a1a 0%,
+      #0f0f0f 40%,
+      #050505 60%,
+      transparent 62%
+    ),
+    
+    /* Black jacket - right lapel */
+    linear-gradient(225deg,
+      #1a1a1a 0%,
+      #0f0f0f 40%,
+      #050505 60%,
+      transparent 62%
+    ),
+    
+    /* Main black jacket body */
+    linear-gradient(180deg, 
+      #0d0d0d 0%,
+      #080808 50%,
+      #000000 100%
+    );
+    
+  background-size: 
+    26px 18px,      /* Tie knot */
+    50px 100%,      /* Tie body - fills full height */
+    50px 100%,      /* Tie texture - fills full height */
+    48% 25%,        /* Collar left - percentage based */
+    48% 25%,        /* Collar right - percentage based */
+    47% 100%,       /* Lapel left - fills full height */
+    47% 100%,       /* Lapel right - fills full height */
+    100% 100%;      /* Jacket body - fills everything */
+    
+  background-position: 
+    center 0px,     /* Tie knot */
+    center 14px,    /* Tie body */
+    center 14px,    /* Tie texture */
+    1% 0px,         /* Collar left */
+    99% 0px,        /* Collar right */
+    0% 0%,          /* Lapel left */
+    100% 0%,        /* Lapel right */
+    center 0%;      /* Jacket body */
+    
+  background-repeat: no-repeat;
+  border-radius: 0 0 12px 12px; /* Only round bottom corners */
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Lapel details and subtle shading */
+.dealer-suit::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background:
+    /* Left lapel subtle highlight */
+    linear-gradient(135deg,
+      transparent 0%,
+      transparent 5%,
+      rgba(60, 80, 120, 0.15) 10%,
+      rgba(40, 60, 100, 0.1) 20%,
+      transparent 25%
+    ),
+    
+    /* Right lapel subtle highlight */
+    linear-gradient(225deg,
+      transparent 0%,
+      transparent 5%,
+      rgba(60, 80, 120, 0.15) 10%,
+      rgba(40, 60, 100, 0.1) 20%,
+      transparent 25%
+    );
+    
+  background-size: 
+    47% 100%,
+    47% 100%;
+    
+  background-position: 
+    0% 0%,
+    100% 0%;
+    
+  background-repeat: no-repeat;
+  pointer-events: none;
+  border-radius: 0 0 12px 12px; /* Match parent radius */
 }
 
 .items {

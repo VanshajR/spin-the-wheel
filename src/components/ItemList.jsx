@@ -150,7 +150,10 @@ const ItemList = () => {
       {/* Items List */}
       <div className="items-container">
         {items.length === 0 ? (
-          <p className="empty-message">No entries yet. Add some to get started!</p>
+          <div className="empty-state-wrapper">
+            <p className="empty-message">No entries yet. Add some to get started!</p>
+            <div className="dealer-suit"></div>
+          </div>
         ) : (
           <ul className="items">
             {items.map((item) => (

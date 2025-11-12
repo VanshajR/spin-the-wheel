@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useRef, useImperativeHandle, forwardRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import useStore from '../store/useStore';
 import CasinoLever from './CasinoLever';
@@ -12,10 +12,16 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
   const tickSoundIntervalRef = useRef(null);
   const audioContextRef = useRef(null);
 
+  // Reset rotation when items become empty
+  useEffect(() => {
+    if (items.length === 0) {
+      setRotation(0);
+    }
+  }, [items.length]);
+
   // Expose reset function to parent
   useImperativeHandle(ref, () => ({
     resetRotation: () => {
-      console.log('Resetting wheel rotation to 0');
       setRotation(0);
     }
   }));
