@@ -22,6 +22,7 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
   // Expose reset function to parent
   useImperativeHandle(ref, () => ({
     resetRotation: () => {
+      console.log('[WHEEL] Resetting rotation to 0');
       setRotation(0);
     }
   }));
@@ -118,17 +119,12 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
     setIsSpinning(true);
     setIsSlowingDown(false);
 
-    // Calculate random winner
-    const randomIndex = Math.floor(Math.random() * items.length);
-    const winner = items[randomIndex];
+    // Generate random spin - don't pre-select winner
+    const spins = 8 + Math.random() * 4; // 8-12 full rotations
+    const extraRotation = Math.random() * 360; // Random position within one rotation
+    const finalRotation = rotation + (spins * 360) + extraRotation;
 
-    // Calculate rotation
-    const segmentAngle = 360 / items.length;
-    const winnerAngle = segmentAngle * randomIndex;
-    
-    // Add multiple full rotations + land on winner
-    const spins = 8 + Math.random() * 4; // 8-12 full rotations for more drama
-    const finalRotation = rotation + (spins * 360) + (270 - winnerAngle);
+    console.log(`[WHEEL] Spinning randomly - extra rotation: ${extraRotation}°, final: ${finalRotation}°`);
 
     setRotation(finalRotation);
 
@@ -158,10 +154,34 @@ const Wheel = forwardRef(({ onSpinComplete }, ref) => {
       playWinSound();
     }, 4000);
 
-    // Wait for animation to complete
+    // Wait for animation to complete, THEN calculate winner based on final position
     setTimeout(() => {
       setIsSpinning(false);
       setIsSlowingDown(false);
+      
+      // Calculate which segment the pointer landed on
+      // Pointer is at 270° (top), segments start at -90° (also top)
+      // Normalize the final rotation to 0-360 range
+      const normalizedRotation = ((finalRotation % 360) + 360) % 360;
+      
+      // The pointer is at 270° in world space
+      // After rotation, we need to find which segment is at the pointer
+      // Segment centers are at: (i * segmentAngle + segmentAngle/2 - 90 + rotation) mod 360
+      // We want to find i where: (i * segmentAngle + segmentAngle/2 - 90 + normalizedRotation) mod 360 ≈ 270
+      
+      const segmentAngle = 360 / items.length;
+      
+      // The angle from the starting point (top at -90°) after rotation
+      // Pointer position relative to segment 0 start = (270 - normalizedRotation + 90) mod 360
+      const relativeAngle = ((270 - normalizedRotation + 90) % 360 + 360) % 360;
+      
+      // Which segment does this angle fall into?
+      const winnerIndex = Math.floor(relativeAngle / segmentAngle) % items.length;
+      const winner = items[winnerIndex];
+      
+      console.log(`[WHEEL] Final rotation: ${normalizedRotation}°, Relative angle: ${relativeAngle}°`);
+      console.log(`[WHEEL] Pointer landed on segment ${winnerIndex}: "${winner.name}"`);
+      
       onSpinComplete(winner);
     }, 4200);
   };

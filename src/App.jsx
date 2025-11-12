@@ -19,10 +19,14 @@ function App() {
   const { handleSpinResult, redoLastSpin, soundEnabled, items, gameMode } = useStore();
 
   const handleSpinComplete = (selectedItem) => {
+    console.log(`[APP] Spin complete - received "${selectedItem.name}" as selected item`);
+    
     // Check if this is the last elimination (2 items before spin, 1 after)
     if (gameMode === 'elimination' && items.length === 2) {
+      console.log('[APP] Elimination mode: Last elimination - 2 items remaining');
       // This spin will eliminate one, leaving the winner
       const remainingItem = items.find(item => item.id !== selectedItem.id);
+      console.log(`[APP] Eliminating "${selectedItem.name}", final winner is "${remainingItem.name}"`);
       setWinner(selectedItem); // Show eliminated item first
       handleSpinResult(selectedItem);
       
@@ -31,13 +35,19 @@ function App() {
         setEliminationWinner(remainingItem);
       }, 100);
     } else if (gameMode === 'elimination' && items.length === 1) {
+      console.log('[APP] Elimination mode: Only 1 item left - showing as winner');
       // Only 1 item left - show winner immediately
       setEliminationWinner(items[0]);
       // Reset wheel immediately
       if (wheelRef.current) {
         wheelRef.current.resetRotation();
       }
+    } else if (gameMode === 'elimination') {
+      console.log(`[APP] Elimination mode: Eliminating "${selectedItem.name}"`);
+      setWinner(selectedItem);
+      handleSpinResult(selectedItem);
     } else {
+      console.log(`[APP] Reward mode: "${selectedItem.name}" wins!`);
       setWinner(selectedItem);
       handleSpinResult(selectedItem);
     }
@@ -166,6 +176,12 @@ function App() {
           onClose={() => {
             console.log('Closing elimination winner modal');
             setEliminationWinner(null);
+            
+            // Clear all remaining items from the wheel
+            const { clearItems } = useStore.getState();
+            clearItems();
+            console.log('[APP] Cleared all items from wheel');
+            
             // Reset wheel rotation when winner popup closes - with slight delay
             setTimeout(() => {
               if (wheelRef.current) {
