@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Settings as SettingsIcon, Trophy, Trash2, Volume2, VolumeX } from 'lucide-react';
+import { X, Settings as SettingsIcon, Trophy, Trash2, Volume2, VolumeX, RotateCcw } from 'lucide-react';
+import { toast } from 'react-toastify';
 import useStore from '../store/useStore';
 import './Settings.css';
 
@@ -12,6 +13,8 @@ const Settings = ({ isOpen, onClose }) => {
     setRemoveAfterSpin,
     soundEnabled,
     setSoundEnabled,
+    resetWheel,
+    originalItems,
   } = useStore();
 
   if (!isOpen) return null;
@@ -70,6 +73,27 @@ const Settings = ({ isOpen, onClose }) => {
                 </button>
               </div>
             </div>
+
+            {/* Reset Wheel (only for elimination mode) */}
+            {gameMode === 'elimination' && originalItems.length > 0 && (
+              <div className="setting-section">
+                <h3 className="section-title">Reset</h3>
+                <button
+                  className="reset-wheel-button"
+                  onClick={() => {
+                    resetWheel();
+                    toast.success('Wheel reset! All original names restored.', {
+                      position: 'bottom-right',
+                      autoClose: 2000,
+                    });
+                  }}
+                >
+                  <RotateCcw size={20} />
+                  <span>Reset Wheel</span>
+                  <span className="reset-desc">Restore all eliminated names</span>
+                </button>
+              </div>
+            )}
 
             {/* Remove After Spin (only for reward mode) */}
             {gameMode === 'reward' && (

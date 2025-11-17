@@ -4,6 +4,9 @@ const useStore = create((set, get) => ({
   // Wheel items - start empty
   items: [],
   
+  // Original items for elimination mode reset
+  originalItems: [],
+  
   // Game mode: 'reward' or 'elimination'
   gameMode: 'reward',
   
@@ -21,7 +24,7 @@ const useStore = create((set, get) => ({
   
   // Add item
   addItem: (name) => {
-    const items = get().items;
+    const { items, gameMode, originalItems } = get();
     // Alternating red/black pattern for roulette wheel
     const colors = ['#D32F2F', '#1a1a1a']; // Red, Black
     const color = colors[items.length % 2];
@@ -32,13 +35,19 @@ const useStore = create((set, get) => ({
       color: color
     };
     
-    set({ items: [...items, newItem] });
+    const newItems = [...items, newItem];
+    // Update originalItems if in elimination mode
+    if (gameMode === 'elimination') {
+      set({ items: newItems, originalItems: [...newItems] });
+    } else {
+      set({ items: newItems });
+    }
     return newItem;
   },
   
   // Add multiple items
   addItems: (names) => {
-    const items = get().items;
+    const { items, gameMode } = get();
     const colors = ['#D32F2F', '#1a1a1a']; // Red, Black
     const newItems = names.map((name, index) => {
       const color = colors[(items.length + index) % 2];
@@ -49,7 +58,13 @@ const useStore = create((set, get) => ({
       };
     });
     
-    set({ items: [...items, ...newItems] });
+    const allItems = [...items, ...newItems];
+    // Update originalItems if in elimination mode
+    if (gameMode === 'elimination') {
+      set({ items: allItems, originalItems: [...allItems] });
+    } else {
+      set({ items: allItems });
+    }
     return newItems;
   },
   
@@ -82,7 +97,13 @@ const useStore = create((set, get) => ({
   
   // Set items (replace all)
   setItems: (items) => {
-    set({ items });
+    const { gameMode } = get();
+    // Save as original items if in elimination mode
+    if (gameMode === 'elimination') {
+      set({ items, originalItems: [...items] });
+    } else {
+      set({ items });
+    }
   },
   
   // Check for duplicates
@@ -96,7 +117,13 @@ const useStore = create((set, get) => ({
   
   // Game mode
   setGameMode: (mode) => {
-    set({ gameMode: mode });
+    const { items } = get();
+    // Save original items when entering elimination mode
+    if (mode === 'elimination' && items.length > 0) {
+      set({ gameMode: mode, originalItems: [...items] });
+    } else {
+      set({ gameMode: mode });
+    }
   },
   
   // Settings
@@ -159,6 +186,19 @@ const useStore = create((set, get) => ({
       lastWinner: null,
       selectedItem: null
     });
+  },
+  
+  // Reset wheel to original items (for elimination mode)
+  resetWheel: () => {
+    const { originalItems } = get();
+    if (originalItems.length > 0) {
+      set({ 
+        items: [...originalItems],
+        spinHistory: [],
+        lastWinner: null,
+        selectedItem: null
+      });
+    }
   }
 }));
 
